@@ -1,0 +1,38 @@
+CREATE TABLE turnos (
+    ID SERIAL PRIMARY KEY,
+    DNI INTEGER NOT NULL,
+    DESTINO VARCHAR(10) NOT NULL,
+    CREADO_A TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ESTADO VARCHAR(10) NOT NULL,
+    CONSTRAINT chk_dni CHECK (DNI BETWEEN 10000000 AND 99999999),
+    CONSTRAINT chk_destino CHECK (DESTINO IN ('TECNICA', 'PAGO', 'CONSULTA')),
+    CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE'))
+);
+
+
+
+
+
+
+
+
+
+document.getElementById('formulario-turno').addEventListener('submit', (e) => {
+    e.preventDefault(); // Evita el envío del formulario por defecto
+    
+    const dni = document.getElementById('dni').value;
+    const destino = document.getElementById('destino').value;
+    
+    crearTurno(dni, destino); // Llama a la función para crear el turno
+    });
+<div>
+    <form id="formulario-turno">
+    <input type="text" id="dni" placeholder="DNI" required>
+    <select id="destino" required>
+        <option value="TECNICA">Técnica</option>
+        <option value="PAGO">Pago</option>
+        <option value="CONSULTA">Consulta</option>
+    </select>
+    <button type="submit">Crear Turno</button>
+    </form>
+</div>
