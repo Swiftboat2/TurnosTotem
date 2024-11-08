@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000');
+const socket = io('ws://localhost:3000/');
 
 const TelePago = () => {
   const [turnos, setTurnos] = useState([]);
@@ -47,8 +47,19 @@ const TelePago = () => {
               className="bg-white shadow-md rounded-lg p-4 flex justify-between items-center"
             >
               <div className="flex items-center space-x-4">
+                <span className="font-semibold text-gray-800">Numero de Turno: {turno.id}</span>
                 <span className="font-semibold text-gray-800">DNI: {String(turno.dni).slice(-4)}</span>
-                <span className="text-sm text-gray-600 bg-gray-200 px-2 py-1 rounded-full">{turno.estado}</span>
+                <span className={`text-sm px-2 py-1 rounded-full ${
+                  turno.estado === 'ATENDIENDO' ? 'bg-yellow-200 text-yellow-800' : 
+                  turno.estado === 'ESPERA' ? 'bg-blue-200 text-blue-800' :
+                  turno.estado === 'LLAMANDO' ? 'bg-red-200 text-red-800' : 
+                  'bg-green-200 text-green-800'
+                }`}>
+                  {turno.estado}
+                </span>
+              </div>
+              <div className="text-sm text-gray-500">
+                {turno.timestamp && new Date(turno.timestamp).toLocaleTimeString()}
               </div>
             </li>
           ))}

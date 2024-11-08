@@ -7,7 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173'
+    origin: 'http://localhost:5173',
   }
 });
 
@@ -36,8 +36,8 @@ function setupSocketHandlers(socket) {
 const getTurnosByDestino = async (destino) => {
     try {
       return await handleDatabaseQuery(
-        'SELECT * FROM turnos WHERE DESTINO = $1 AND ESTADO = $2 ORDER BY CREADO_A ASC',
-        [destino, 'PENDIENTE']
+        'SELECT * FROM turnos WHERE DESTINO = $1 AND ESTADO = $2 OR ESTADO = $3 OR ESTADO = $4 ORDER BY CREADO_A ASC',
+        [destino, 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO']
       );
     } catch (error) {
       throw new Error(`Error fetching turnos for destino ${destino}`);
@@ -74,8 +74,7 @@ const getTurnosByDestino = async (destino) => {
     }
   });
 
-  // Crear turno  
-
+// Crear turno  
 socket.on('crearTurno', async (body) => {
     const { DNI, DESTINO } = body;
     try {
@@ -109,8 +108,22 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
     }
   });
   
+  socket.on('comentarTurno', async (body) => {
+    const { id, comentario } = body;
+    try {
+      const turnoActualizado = await handleDatabaseQuery(
+        'UPDATE turnos SET comentario = $1 WHERE id = $2 RETURNING *',
+        [comentario, id]
+      );
+      // Emitir el evento para que los clientes recarguen la lista de turnos
+      io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
   
-}
+      socket.emit('respuestaComentarTurno', turnoActualizado);
+    } catch (error) {
+      socket.emit('error', 'Error comentando el turno');
+    }
+  });
+  }
 
 io.on('connection', (socket) => {
 setupSocketHandlers(socket);

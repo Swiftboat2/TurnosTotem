@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3000'); // Asegúrate de que la URL sea la correcta
+const socket = io('ws://localhost:3000/'); 
 
 export default function IngresoUsuario() {
   const [selectedOption, setSelectedOption] = useState('');
   const [dni, setDni] = useState('');
   const [options] = useState(['TECNICA', 'PAGO', 'CONSULTA']);
   const [message, setMessage] = useState('');
+  const logo = '/Logo.png';
 
   const handleSelect = (option) => {
     setSelectedOption(option);
@@ -16,7 +17,10 @@ export default function IngresoUsuario() {
   const handleDniChange = (event) => {
     setDni(event.target.value);
   };
-
+  const onClear = () => {
+    setDni("");
+    setSelectedOption("");
+  };
   const handleSubmit = () => {
     if (dni && selectedOption) {
       // Emitir el evento 'crearTurno' al servidor con el DNI y DESTINO
@@ -38,9 +42,10 @@ export default function IngresoUsuario() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+      <img src={logo} alt="Logo" className="absolute w-[300px] h-[200px] top-0" />
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md">
         <h2 className="text-3xl font-extrabold text-gray-900 text-center">
-          Registro de Turno
+          ¡Bienvenido!
         </h2>
         <div className="space-y-6">
           <div>
@@ -74,13 +79,16 @@ export default function IngresoUsuario() {
 
           <div>
             <button
-              onClick={handleSubmit}
+              onClick={() => { 
+                handleSubmit(); 
+                setTimeout(() => onClear(), 7000); 
+              }}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               Enviar
             </button>
           </div>
-
+          
           {message && (
             <div className="mt-4 text-center text-sm text-gray-700 bg-gray-100 p-3 rounded-md">
               {message}
