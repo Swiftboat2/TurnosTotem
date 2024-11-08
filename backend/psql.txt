@@ -6,15 +6,9 @@ CREATE TABLE turnos (
     ESTADO VARCHAR(10) NOT NULL,
     CONSTRAINT chk_dni CHECK (DNI BETWEEN 10000000 AND 99999999),
     CONSTRAINT chk_destino CHECK (DESTINO IN ('TECNICA', 'PAGO', 'CONSULTA')),
-    CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE'))
+    CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO', 'RESUELTO'));
+
 );
-
-
-
-
-
-
-
 
 
 document.getElementById('formulario-turno').addEventListener('submit', (e) => {
@@ -36,3 +30,46 @@ document.getElementById('formulario-turno').addEventListener('submit', (e) => {
     <button type="submit">Crear Turno</button>
     </form>
 </div>
+
+
+
+
+const getTurnosByDestinoComentarios = async (destino) => {
+    try {
+      return await handleDatabaseQuery(
+        'SELECT * FROM turnos WHERE DESTINO = $1 AND ESTADO = $2 AND comentario IS NOT NULL ORDER BY CREADO_A ASC',
+        [destino, 'LISTO']
+      );
+    } catch (error) {
+      throw new Error(`Error fetching turnos for destino ${destino}`);
+    }
+  };
+  // Consulta para "Técnica"
+  socket.on('getUsuarioTecnica', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('TECNICA');
+      socket.emit('respuestaResponderTurnoConsulta', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de tecnica');
+    }
+  });
+  
+  // Consulta para "Pagos"
+  socket.on('getUsuarioPagos', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('PAGO');
+      socket.emit('respuestaResponderTurnoPago', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de pagos');
+    }
+  });
+  
+  // Consulta para "Consulta"
+  socket.on('getUsuarioConsulta', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('CONSULTA');
+      socket.emit('respuestaResponderTurnoTecnica', turnos); 
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de consulta');
+    }
+  });

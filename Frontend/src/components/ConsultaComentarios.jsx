@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 const socket = io('ws://localhost:3000/');
 
 
-const ComentariosTecnica = () =>{
+const ComentariosConsulta = () =>{
     const [turnos, setTurnos] = useState([]); 
     const formatTime = (dateString) => {
         const date = new Date(dateString);
@@ -12,11 +12,10 @@ const ComentariosTecnica = () =>{
                ' ' +
                date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
     };
-    
   useEffect(() => {
     // Función para obtener los turnos
     const obtenerTurnos = () => {
-      socket.emit('getUsuarioTecnicaComentado');
+      socket.emit('getUsuarioConsultaComentado');
     };
   
     // Obtener los turnos cuando el componente se monte
@@ -29,20 +28,20 @@ const ComentariosTecnica = () =>{
     });
 
     // Escuchar los turnos de la técnica
-    socket.on('respuestaResponderTurnoTecnica', (turnos) => {
+    socket.on('respuestaResponderTurnoConsulta', (turnos) => {
       setTurnos(turnos);
     });
   
     // Cleanup de listeners cuando el componente se desmonte
     return () => {
       socket.off('turnosActualizados');
-      socket.off('respuestaResponderTurnoTecnica');
+      socket.off('respuestaResponderTurnoConsulta');
     };
   }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Atender de Técnica</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Atender de Consultas</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {turnos.map((turno) => (
           <div key={turno.id} className="bg-white shadow-lg rounded-xl p-6 transition-all duration-300 hover:shadow-xl">
@@ -100,4 +99,4 @@ const ComentariosTecnica = () =>{
   )
 };
 
-export default ComentariosTecnica
+export default ComentariosConsulta

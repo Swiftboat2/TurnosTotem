@@ -7,6 +7,7 @@ import TurnosConsulta from './components/Consulta';
 import TeleTecnica from './components/TeleTecnica';
 import TeleConsulta from './components/TeleConsulta';
 import TelePago from './components/TelePago';
+import ComentariosTecnica from './components/TecnicaComentarios';
 
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
     <Route path="/teletecnica" element={<TeleTecnica />} />
     <Route path="/teleconsulta" element={<TeleConsulta />} />
     <Route path="/telepago" element={<TelePago />} />
+    <Route path="/resolvertecnica" element={<ComentariosTecnica />} />
+
   </Routes>
 </Router>
   )

@@ -96,7 +96,7 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
     const { id, ESTADO } = body;
     try {
       const turnoActualizado = await handleDatabaseQuery(
-        'UPDATE turnos SET ESTADO = $1 WHERE id = $2 RETURNING *',
+        'UPDATE turnos SET ESTADO = $1, creado_a = NOW() WHERE id = $2 RETURNING *',
         [ESTADO, id]
       );
       // Emitir el evento para que los clientes recarguen la lista de turnos
@@ -123,7 +123,50 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
       socket.emit('error', 'Error comentando el turno');
     }
   });
+
+  const getTurnosByDestinoComentarios = async (destino) => {
+    try {
+      return await handleDatabaseQuery(
+        'SELECT * FROM turnos WHERE DESTINO = $1 AND ESTADO = $2 AND comentario IS NOT NULL ORDER BY CREADO_A ASC',
+        [destino, 'LISTO']
+      );
+    } catch (error) {
+      throw new Error(`Error fetching turnos for destino ${destino}`);
+    }
+  };
+  // Consulta para "Técnica comentados"
+  socket.on('getUsuarioTecnicaComentado', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('TECNICA');
+      socket.emit('respuestaResponderTurnoTecnica', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de tecnica');
+    }
+  });
+  
+  // Consulta para "Pagos comentados"
+  socket.on('getUsuarioPagosComentado', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('PAGO');
+      socket.emit('respuestaResponderTurnoPago', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de pagos');
+    }
+  });
+  
+  // Consulta para "Consulta comentados"
+  socket.on('getUsuarioConsultaComentado', async () => {
+    try {
+      const turnos = await getTurnosByDestinoComentarios('CONSULTA');
+      socket.emit('respuestaResponderTurnoConsulta', turnos); 
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de consulta');
+    }
+  });
+    
+  
   }
+
 
 io.on('connection', (socket) => {
 setupSocketHandlers(socket);

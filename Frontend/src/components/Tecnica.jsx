@@ -66,7 +66,7 @@ const TurnosTecnica = () => {
                   <span className="font-semibold text-gray-800">ID:  {turno.id}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' 
-                    : turno.est === 'LLAMANDO' ? 'bg-red-100 text-red-800'
+                    : turno.estado === 'LLAMANDO' ? 'bg-red-100 text-red-800'
                     : 'bg-gray-100 text-gray-800'
                   }`}>
                     {turno.estado}
