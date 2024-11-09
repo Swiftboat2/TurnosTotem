@@ -50,9 +50,10 @@ const TeleTecnica = () => {
                 <span className="font-semibold text-gray-800">DNI: {String(turno.dni).slice(-4)}</span>
                 <span className={`text-sm px-2 py-1 rounded-full ${
                   turno.estado === 'ATENDIENDO' ? 'bg-yellow-200 text-yellow-800' : 
-                  turno.estado === 'ESPERA' ? 'bg-blue-200 text-blue-800' : 
-                  turno.estado === 'LLAMANDO' ? 'bg-red-200 text-red-800' :
-                  'bg-green-200 text-green-800'
+                  turno.estado === 'PENDIENTE' ? 'bg-blue-200 text-blue-800' : 
+                  turno.estado === 'LLAMANDO DE BOX 1' ? 'bg-red-200 text-red-800'  : 
+                  turno.estado === 'LLAMANDO DE BOX 2' ? 'bg-red-200 text-red-800'  : 
+                  turno.estado === 'LLAMANDO DE BOX 3'? 'bg-red-200 text-red-800' : 'bg-green-200 text-green-800'
                 }`}>
                   {turno.estado}
                 </span>

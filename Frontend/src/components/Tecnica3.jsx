@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 
 const socket = io('ws://localhost:3000/');
 
-const TurnosTecnica = () => {
+const TurnosTecnica3 = () => {
   const [turnos, setTurnos] = useState([]); 
   const [comentarios, setComentarios] = useState({}); 
   
@@ -66,7 +66,7 @@ const TurnosTecnica = () => {
                   <span className="font-semibold text-gray-800">ID:  {turno.id}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' 
-                    : turno.estado === 'LLAMANDO' ? 'bg-red-100 text-red-800'
+                    : turno.estado === 'LLAMANDO DE BOX 3' ? 'bg-red-100 text-red-800'
                     : 'bg-gray-100 text-gray-800'
                   }`}>
                     {turno.estado}
@@ -77,7 +77,7 @@ const TurnosTecnica = () => {
                     onClick={() => {
                       socket.emit('actualizarEstadoDelTurno', {
                         id: turno.id,
-                        ESTADO: 'LLAMANDO',
+                        ESTADO: 'LLAMANDO DE BOX 3',
                       });
                     }}
                     className="bg-red-500 hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center gap-2"
@@ -85,7 +85,7 @@ const TurnosTecnica = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 2a6 6 0 016 6v3.586l.707.707a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414L4 11.586V8a6 6 0 016-6zm0 16a2 2 0 01-1.732-1h3.464A2 2 0 0110 18z" clipRule="evenodd" />
                   </svg>
-                    Llamar
+                    Llamar De Box 3
                   </button>
                   <button
                     onClick={() => {
@@ -103,7 +103,7 @@ const TurnosTecnica = () => {
                   </button>
                   <button
                     onClick={() => {
-                      socket.emit('actualizarEstadoDelTurno', {
+                      socket.emit('actualizarEstadoDelTurnoListo', {
                         id: turno.id,
                         ESTADO: 'LISTO',
                       });
@@ -145,4 +145,4 @@ const TurnosTecnica = () => {
  
 };
 
-export default TurnosTecnica;
+export default TurnosTecnica3;

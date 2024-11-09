@@ -36,14 +36,15 @@ function setupSocketHandlers(socket) {
 const getTurnosByDestino = async (destino) => {
     try {
       return await handleDatabaseQuery(
-        'SELECT * FROM turnos WHERE DESTINO = $1 AND ESTADO = $2 OR ESTADO = $3 OR ESTADO = $4 ORDER BY CREADO_A ASC',
-        [destino, 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO']
+        `SELECT * FROM turnos WHERE DESTINO = $1 AND (ESTADO = $2 OR ESTADO = $3 OR ESTADO = $4 OR ESTADO = $5 OR ESTADO = $6) ORDER BY CREADO_A ASC`,
+        [destino, 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO DE BOX 1', 'LLAMANDO DE BOX 2', 'LLAMANDO DE BOX 3']
       );
     } catch (error) {
       throw new Error(`Error fetching turnos for destino ${destino}`);
     }
   };
-  
+// Emitir el evento para que los clientes recarguen la lista de turnos
+io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
   // Consulta para "Técnica"
   socket.on('getUsuarioTecnica', async () => {
     try {
@@ -82,6 +83,7 @@ socket.on('crearTurno', async (body) => {
         'INSERT INTO turnos (DNI, DESTINO, ESTADO) VALUES ($1, $2, $3) RETURNING *',
         [DNI, DESTINO, 'PENDIENTE']
       );
+      
       // Emitir los turnos actualizados a todos los clientes
       io.emit('turnosActualizados');  // Esto emite a todos los clientes conectados
       socket.emit('respuestaCrearTurno', nuevoTurno); // Emitir la respuesta al cliente que lo solicitó
@@ -96,13 +98,26 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
     const { id, ESTADO } = body;
     try {
       const turnoActualizado = await handleDatabaseQuery(
-        'UPDATE turnos SET ESTADO = $1, creado_a = NOW() WHERE id = $2 RETURNING *',
+        'UPDATE turnos SET ESTADO = $1 WHERE id = $2 RETURNING *',
         [ESTADO, id]
       );
-      // Emitir el evento para que los clientes recarguen la lista de turnos
-      io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
-  
+  // Emitir el evento para que los clientes recarguen la lista de turnos
+io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
       socket.emit('respuestaActualizarEstado', turnoActualizado);
+    } catch (error) {
+      socket.emit('error', 'Error actualizando el estado del turno');
+    }
+  });
+
+  socket.on('actualizarEstadoDelTurnoListo', async (body) => {
+    const { id, ESTADO } = body;
+    try {
+      const turnoActualizado = await handleDatabaseQuery(
+        'UPDATE turnos SET ESTADO = $1, creado_a = NOW() WHERE id = $2 RETURNING *',
+        ['LISTO', id]
+      );
+      io.emit('turnosActualizados');
+      socket.emit('respuestaActualizarEstadoListo', turnoActualizado);
     } catch (error) {
       socket.emit('error', 'Error actualizando el estado del turno');
     }
@@ -134,6 +149,8 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
       throw new Error(`Error fetching turnos for destino ${destino}`);
     }
   };
+  // Emitir el evento para que los clientes recarguen la lista de turnos
+io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
   // Consulta para "Técnica comentados"
   socket.on('getUsuarioTecnicaComentado', async () => {
     try {
@@ -166,7 +183,6 @@ socket.on('actualizarEstadoDelTurno', async (body) => {
     
   
   }
-
 
 io.on('connection', (socket) => {
 setupSocketHandlers(socket);

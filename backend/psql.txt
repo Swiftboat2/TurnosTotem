@@ -6,10 +6,11 @@ CREATE TABLE turnos (
     ESTADO VARCHAR(10) NOT NULL,
     CONSTRAINT chk_dni CHECK (DNI BETWEEN 10000000 AND 99999999),
     CONSTRAINT chk_destino CHECK (DESTINO IN ('TECNICA', 'PAGO', 'CONSULTA')),
-    CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO', 'RESUELTO'));
-
+    CONSTRAINT chk_estado
+    CHECK (estado IN ('LLAMANDO', 'EN ESPERA', 'ATENDIDO', 'LLAMANDO DE BOX 1'));
 );
 
+    CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO_PAGO_1', 'LLAMANDO_PAGO_2', 'LLAMANDO_PAGO_3', 'LLAMANDO_TECNICA_1', 'LLAMANDO_TECNICA_2', 'LLAMANDO_CONSULTA_1','LLAMANDO_CONSULTA_3','LLAMANDO_CONSULTA_3'));
 
 document.getElementById('formulario-turno').addEventListener('submit', (e) => {
     e.preventDefault(); // Evita el envío del formulario por defecto
@@ -73,3 +74,18 @@ const getTurnosByDestinoComentarios = async (destino) => {
       socket.emit('error', 'Error fetching turnos de consulta');
     }
   });
+
+
+  socket.on('actualizarEstadoDelTurnoListo', async (body) => {
+    const { id, ESTADO } = body;
+    try {
+      const turnoActualizado = await handleDatabaseQuery(
+        'UPDATE turnos SET ESTADO = $1, creado_a = NOW() WHERE id = $2 RETURNING *',
+        [ESTADO, id]
+      );
+      socket.emit('respuestaActualizarEstadoListo', turnoActualizado);
+    } catch (error) {
+      socket.emit('error', 'Error actualizando el estado del turno');
+    }
+  });
+  
