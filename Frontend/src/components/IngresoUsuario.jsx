@@ -17,10 +17,12 @@ export default function IngresoUsuario() {
   const handleDniChange = (event) => {
     setDni(event.target.value);
   };
+  
   const onClear = () => {
     setDni("");
     setSelectedOption("");
   };
+
   const handleSubmit = () => {
     if (dni && selectedOption) {
       // Emitir el evento 'crearTurno' al servidor con el DNI y DESTINO

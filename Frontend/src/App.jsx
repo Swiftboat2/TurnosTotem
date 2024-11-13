@@ -1,5 +1,6 @@
 import './App.css'
 import IngresoUsuario from './components/IngresoUsuario'
+import Admin from './components/Admin'
 import TurnosTecnica1 from './components/tecnica/Tecnica1'
 import TurnosTecnica2 from './components/tecnica/Tecnica2'
 import TurnosTecnica3 from './components/tecnica/Tecnica3'
@@ -23,6 +24,7 @@ function App() {
 <Router>
   <Routes>
     <Route path="/" element={<IngresoUsuario />} />
+    <Route path='/admin' element={<Admin />}/>
     <Route path="/tecnica1" element={<TurnosTecnica1 />} />
     <Route path="/tecnica2" element={<TurnosTecnica2 />} />
     <Route path="/tecnica3" element={<TurnosTecnica3 />} /> 

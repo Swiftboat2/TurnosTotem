@@ -3,14 +3,28 @@ CREATE TABLE turnos (
     DNI INTEGER NOT NULL,
     DESTINO VARCHAR(10) NOT NULL,
     CREADO_A TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    ESTADO VARCHAR(10) NOT NULL,
+    ESTADO VARCHAR(50) NOT NULL,
     CONSTRAINT chk_dni CHECK (DNI BETWEEN 10000000 AND 99999999),
     CONSTRAINT chk_destino CHECK (DESTINO IN ('TECNICA', 'PAGO', 'CONSULTA')),
     CONSTRAINT chk_estado
-    CHECK (estado IN ('LLAMANDO', 'EN ESPERA', 'ATENDIDO', 'LLAMANDO DE BOX 1'));
+    CHECK (estado IN ('LLAMANDO', 'EN ESPERA', 'ATENDIDO', 'LLAMANDO DE BOX 1', 'LLAMANDO DE BOX 2', 'LLAMANDO DE BOX 3'));
 );
 
+
+
+
+
+
+
+
+
     CONSTRAINT chk_estado CHECK (ESTADO IN ('LISTO', 'PENDIENTE', 'ATENDIENDO', 'LLAMANDO_PAGO_1', 'LLAMANDO_PAGO_2', 'LLAMANDO_PAGO_3', 'LLAMANDO_TECNICA_1', 'LLAMANDO_TECNICA_2', 'LLAMANDO_CONSULTA_1','LLAMANDO_CONSULTA_3','LLAMANDO_CONSULTA_3'));
+
+
+
+
+
+
 
 document.getElementById('formulario-turno').addEventListener('submit', (e) => {
     e.preventDefault(); // Evita el envío del formulario por defecto
@@ -93,3 +107,46 @@ const getTurnosByDestinoComentarios = async (destino) => {
 
 
 panel de metricas react app?
+
+
+const mostrarTodosLosTurnos = async (destino) => {
+    try {
+      return await handleDatabaseQuery(
+        `SELECT * FROM turnos WHERE DESTINO = $1 ORDER BY CREADO_A ASC`,
+        [destino, ]
+      );
+    } catch (error) {
+      throw new Error(`Error fetching turnos`);
+    }
+  };
+// Emitir el evento para que los clientes recarguen la lista de turnos
+io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
+  // Consulta para "Técnica"
+  socket.on('TurnosUsuarioTecnica', async () => {
+    try {
+      const turnos = await mostrarTodosLosTurnos('TECNICA');
+      socket.emit('mostrarTodosLosTurnosTecnica', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de tecnica');
+    }
+  });
+  
+  // Consulta para "Pagos"
+  socket.on('TurnosUsuarioPagos', async () => {
+    try {
+      const turnos = await mostrarTodosLosTurnos('PAGO');
+      socket.emit('mostrarTodosLosTurnosPagos', turnos);
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de pagos');
+    }
+  });
+  
+  // Consulta para "Consulta"
+  socket.on('TurnosUsuarioConsulta', async () => {
+    try {
+      const turnos = await mostrarTodosLosTurnos('CONSULTA');
+      socket.emit('mostrarTodosLosTurnosConsulta', turnos); 
+    } catch (error) {
+      socket.emit('error', 'Error fetching turnos de consulta');
+    }
+  });

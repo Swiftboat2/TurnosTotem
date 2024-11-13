@@ -21,7 +21,7 @@ const TelePago = () => {
       obtenerTurnos();
     });
   
-    // Escuchar los turnos de la técnica
+    // Escuchar los turnos de la pagos
     socket.on('respuestaUsuarioPagos', (turnos) => {
       setTurnos(turnos);
     });

@@ -150,7 +150,7 @@ io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
     }
   };
   // Emitir el evento para que los clientes recarguen la lista de turnos
-io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
+ // Este evento se usará para refrescar la vista
   // Consulta para "Técnica comentados"
   socket.on('getUsuarioTecnicaComentado', async () => {
     try {
@@ -180,6 +180,16 @@ io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
       socket.emit('error', 'Error fetching turnos de consulta');
     }
   });
+
+  socket.on('mostrarTodosLosTurnos', async () => {
+    io.emit('turnosActualizados');
+    try {
+      const turnos = await handleDatabaseQuery('SELECT * FROM turnos');
+        socket.emit('mostrarTodosLosTurnos', turnos)
+      } catch (error) {
+        throw new Error(`Error fetching turnos`);
+      }
+  })
     
   
   }
