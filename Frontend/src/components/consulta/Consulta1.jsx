@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 
 const socket = io('ws://localhost:3000/');
 
-const TurnosPago = () => {
+const TurnosConsulta = () => {
   const [turnos, setTurnos] = useState([]);
   const [comentarios, setComentarios] = useState({}); 
   
@@ -19,12 +19,13 @@ const TurnosPago = () => {
     const comentario = comentarios[id]; 
     socket.emit('comentarTurno', { id, comentario });
   }
+
+
   useEffect(() => {
     // Función para obtener los turnos
     const obtenerTurnos = () => {
-      socket.emit('getUsuarioPagos');
+      socket.emit('getUsuarioConsulta');
     };
-  
     // Obtener los turnos cuando el componente se monte
     obtenerTurnos();
   
@@ -35,20 +36,22 @@ const TurnosPago = () => {
     });
   
     // Escuchar los turnos de la técnica
-    socket.on('respuestaUsuarioPagos', (turnos) => {
+    socket.on('respuestaUsuarioConsulta', (turnos) => {
       setTurnos(turnos);
     });
   
     // Cleanup de listeners cuando el componente se desmonte
     return () => {
       socket.off('turnosActualizados');
-      socket.off('respuestaUsuarioPagos');
+      socket.off('respuestaUsuarioConsulta');
     };
   }, []);
- 
+  
+
+  
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Turnos de Pago</h1>
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Turnos de Consulta</h1>
       {turnos.length === 0 ? (
         <div className="bg-white shadow-md rounded-lg p-6 flex items-center justify-center h-32">
           <p className="text-lg text-gray-600">No hay turnos en espera.</p>
@@ -65,7 +68,9 @@ const TurnosPago = () => {
                   <span className="font-semibold text-gray-800">{turno.dni}</span>
                   <span className="font-semibold text-gray-800">ID:  {turno.id}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                   turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' 
+                   : turno.estado === 'LLAMANDO DE BOX 1' ? 'bg-red-100 text-red-800'
+                   : 'bg-gray-100 text-gray-800'
                   }`}>
                     {turno.estado}
                   </span>
@@ -75,7 +80,7 @@ const TurnosPago = () => {
                     onClick={() => {
                       socket.emit('actualizarEstadoDelTurno', {
                         id: turno.id,
-                        ESTADO: 'LLAMANDO',
+                        ESTADO: 'LLAMANDO DE BOX 1',
                       });
                     }}
                     className="bg-red-500 hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center gap-2"
@@ -83,7 +88,7 @@ const TurnosPago = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 2a6 6 0 016 6v3.586l.707.707a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414L4 11.586V8a6 6 0 016-6zm0 16a2 2 0 01-1.732-1h3.464A2 2 0 0110 18z" clipRule="evenodd" />
                   </svg>
-                    Llamar
+                  Llamar De Box 1
                   </button>
                   <button
                     onClick={() => {
@@ -140,4 +145,5 @@ const TurnosPago = () => {
     </div>
   );
 };
-export default TurnosPago;
+
+export default TurnosConsulta;

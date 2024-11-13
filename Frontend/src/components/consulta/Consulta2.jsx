@@ -68,7 +68,9 @@ const TurnosConsulta = () => {
                   <span className="font-semibold text-gray-800">{turno.dni}</span>
                   <span className="font-semibold text-gray-800">ID:  {turno.id}</span>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                     turno.estado === 'ATENDIENDO' ? 'bg-yellow-100 text-yellow-800' 
+                    : turno.estado === 'LLAMANDO DE BOX 2' ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
                   }`}>
                     {turno.estado}
                   </span>
@@ -78,7 +80,7 @@ const TurnosConsulta = () => {
                     onClick={() => {
                       socket.emit('actualizarEstadoDelTurno', {
                         id: turno.id,
-                        ESTADO: 'LLAMANDO',
+                        ESTADO: 'LLAMANDO DE BOX 2',
                       });
                     }}
                     className="bg-red-500 hover:bg-red-800 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center gap-2"
@@ -86,7 +88,7 @@ const TurnosConsulta = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 2a6 6 0 016 6v3.586l.707.707a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414L4 11.586V8a6 6 0 016-6zm0 16a2 2 0 01-1.732-1h3.464A2 2 0 0110 18z" clipRule="evenodd" />
                   </svg>
-                    Llamar
+                  Llamar De Box 2
                   </button>
                   <button
                     onClick={() => {
