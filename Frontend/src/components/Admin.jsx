@@ -5,7 +5,6 @@ const socket = io('ws://localhost:3000/')
 
 
 function Admin() {
-
     const [turnos, setTurnos] = useState([]);
 // Formatea la hora para obtener solo la hora (sin minutos ni segundos)
 const formatTime = (dateString) => {
@@ -80,7 +79,7 @@ useEffect(() => {
     }
 
     obtenerTodosLosTurnos()
-    
+
     // Escuchar el evento de actualización de turnos
     socket.on('turnosActualizados', () => {
         // Volver a obtener los turnos para refrescar la vista
@@ -99,34 +98,31 @@ useEffect(() => {
     }, []);
 
     console.log(turnos)
-return (
-<>
-<header>
-    <div className='w-screen flex text-center items-center justify-center h-20'>
-    <h1 className='font-bold text-3xl'>Panel Admin</h1>
-
-    </div>
-</header>
-<div className='grid grid-cols-2 md:grid-cols-1 sm:grid-cols-1  text-center items-center justify-start mt-20'>
-    <div className='text-start'>
-        <h1 className='ml-[410px] text-xl font-bold'>Turnos del Dia</h1>
-<LineChart width={900} height={500} data={turnosDelDia}>
-    <Line type="monotone" dataKey="tecnica" stroke="#8884d8" name="Técnica" />
-    <Line type="monotone" dataKey="consulta" stroke="#82ca9d" name="Consulta" />
-    <Line type="monotone" dataKey="pago" stroke="#ff7300" name="Pago" />
-    <CartesianGrid stroke="#ccc" />
-    <XAxis dataKey="hour" />
-    <YAxis />
-    <Tooltip />
-    <Legend />
-  </LineChart>
-    </div>
-    <div>
-
-    </div>
-</div>
-</>
-);    
+    return (
+      <div className="flex flex-col min-h-screen">
+        <header className="w-full flex items-center justify-center h-20 bg-gray-100">
+          <h1 className="font-bold text-3xl mb-6">Panel Admin</h1>
+        </header>
+  
+        <div className="flex items-center justify-center">
+          <div className="col-span-2  text-center">
+            <h2 className="text-xl font-bold mb-4">Turnos del Día</h2>
+            <div className="overflow-x-auto mt-8">
+              <LineChart width={900} height={500} data={turnosDelDia}>
+                <Line type="monotone" dataKey="tecnica" stroke="#8884d8" name="Técnica" />
+                <Line type="monotone" dataKey="consulta" stroke="#82ca9d" name="Consulta" />
+                <Line type="monotone" dataKey="pago" stroke="#ff7300" name="Pago" />
+                <CartesianGrid stroke="#ccc" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+              </LineChart>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
 }
 
 export default Admin; 

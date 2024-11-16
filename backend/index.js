@@ -190,9 +190,16 @@ io.emit('turnosActualizados'); // Este evento se usará para refrescar la vista
         throw new Error(`Error fetching turnos`);
       }
   })
-    
+
+  socket.on('chat_message', (data) => {
+    io.emit('chat_message', data);
+});
   
   }
+
+
+
+
 
 io.on('connection', (socket) => {
 setupSocketHandlers(socket);
