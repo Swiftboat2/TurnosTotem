@@ -2,6 +2,8 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const { Pool } = require('pg');
+require('dotenv').config();
+
 
 const app = express();
 const server = http.createServer(app);
@@ -12,14 +14,12 @@ const io = new Server(server, {
 });
 
 
+const connectionString = 'postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@aws-0-sa-east-1.pooler.supabase.com:6543/postgres';
+
 const pool = new Pool({
-    user: 'postgres',
-    password: '1234',
-    host: 'localhost',
-    port: 5432, 
-    database: 'TotemVideoDigital',
-  });
-  
+  connectionString: connectionString,
+});
+
 
 function setupSocketHandlers(socket) {
     const handleDatabaseQuery = async (query, params) => {
