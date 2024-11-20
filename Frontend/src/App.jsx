@@ -8,7 +8,7 @@ import TeleTecnica from './components/tecnica/TeleTecnica.jsx';
 import ComentariosTecnica from './components/tecnica/TecnicaComentarios.jsx';
 import TurnosPago1 from './components/pago/Pago1.jsx';
 import TurnosPago2 from './components/pago/Pago2.jsx';
-import TurnosPago3 from './components/pago/Pago3.jsx'
+import TurnosPago3 from './components/pago/Pago3.jsx';
 import TelePago from './components/pago/TelePago.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import TurnosConsulta1 from './components/consulta/Consulta1.jsx';
