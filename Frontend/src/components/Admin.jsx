@@ -8,8 +8,9 @@ function Admin() {
     const [turnos, setTurnos] = useState([]);
 // Formatea la hora para obtener solo la hora (sin minutos ni segundos)
 const formatTime = (dateString) => {
-    const date = new Date(dateString);
-    return date.getHours(); // Extrae solo la hora
+  const date = new Date(dateString);
+  // Extrae solo la hora
+  return date.getHours(); 
   };
   
   // Función para filtrar los turnos del día actual
